@@ -1,36 +1,48 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 
-import { FormControl, InputLabel, MenuItem, NativeSelect, Select, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
-import { getCountries } from './api/api';
+import { getCountries, getReportCountry } from './api/api';
+
+import Country from './components/Country';
+import Highlight from './components/Highlight';
+import Summary from './components/Summary';
 import { Box } from '@mui/system';
 
 function App() {
   const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState('cf');
+  const [report, setReport] = useState({});
 
   useEffect(() => {
     getCountries().then(res => {
       setCountries(res.data);
-      console.log(res.data)
     })
   }, [])
 
-  const handleSelected = () => {
-    console.log("checked")
+  useEffect(() => {
+    getReportCountry(selectedCountry).then(res => {
+      setReport(res.data[res.data.length - 1]);
+    })
+  }, [selectedCountry])
+
+  useEffect(() => {
+    console.log(selectedCountry)
+  })
+
+  const handleChange = (e) => {
+    setSelectedCountry(e.target.value.toLowerCase());
   }
 
   return (
     <div className="App">
-      <Typography variant='h1' fontWeight='500'>So lieu COVID-19</Typography>
-      <Box width='300px'>
-        <FormControl fullWidth>
-          <NativeSelect onChange={handleSelected}>
-            {
-              countries && countries.map((item, index) => <option key={index} value={item.ISO2}>{item.Country}</option>)
-            }
-          </NativeSelect>
-        </FormControl>
+      <Box mx='auto' width='1280px'>
+        <Typography variant='h1' fontWeight='500'>So lieu COVID-19</Typography>
+
+        <Country countries={countries} onChange={handleChange} value={selectedCountry} />
+        <Highlight report={report} />
+        <Summary />
       </Box>
     </div>
   );

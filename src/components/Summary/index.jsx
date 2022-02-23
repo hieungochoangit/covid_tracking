@@ -1,38 +1,55 @@
 import { Grid } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 
-const index = () => {
-  const options = {
-    chart: {
-      type: 'spline'
+import moment from 'moment'
+
+const generatorData = (data, type) => {
+  const time = data.map((item) => moment(item.Date).format('DD/MM/YYYY'))
+  const number = data.map((item) => item.Confirmed);
+
+  return {
+    chat: {
+      type: type
     },
     title: {
-      text: 'Chart Covid'
+      text: 'Total Confirmed'
     },
-    subtitle: {
-      text: "highcharts"
+    xAxis: {
+      categories: time,
+      crosshair: true,
     },
-    series: [
-      {
-        data: [1, 2, 4, 5, 6]
+    yAxis: {
+      min: 0,
+      title: {
+        text: 'Total Confirmed'
       }
-    ]
+    },
+    series: {
+      data: number,
+      title: {
+        text: 'Total'
+      }
+    }
   }
+}
 
+const Index = (props) => {
+  const [optionsLineChart, setoptionsLineChart] = useState({});
+
+  useEffect(() => {
+    setoptionsLineChart(generatorData(props.totalReport, 'splice'));
+  }, [props.totalReport])
 
   return (
     <Grid container spacing={3}>
-      <Grid item sm={8}>
-        <HighchartsReact highcharts={Highcharts} options={options} />
-      </Grid>
-      <Grid item sm={4}>
-        4
+      <Grid item sm={12}>
+        <HighchartsReact highcharts={Highcharts} options={optionsLineChart} />
       </Grid>
     </Grid>
   )
 }
 
-export default index
+export default Index

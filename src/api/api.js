@@ -10,3 +10,7 @@ export function getReportCountry(slug) {
   .utc(0)
   .format()}`);
 }
+
+export function getTotalSummary() {
+  return axios.get('https://api.covid19api.com/summary');
+}
